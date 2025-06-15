@@ -63,6 +63,10 @@ public:
         else return static_cast<char>(residue+mod);
     }
 
+    static bool checkCipherID(std::string ID){
+        if(ID!="HILL" && ID!="TEXTCODE" && ID!="CAESAR") return false;
+        return true;
+    }
     // static std::string stringFromAlphabetIndices(const std::vector<int>& indices) {
     //     std::string result;
     //     result.reserve(indices.size());
