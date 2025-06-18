@@ -67,6 +67,32 @@ public:
         if(ID!="HILL" && ID!="TEXTCODE" && ID!="CAESAR") return false;
         return true;
     }
+
+    static std::string fixTxtExtension(const std::string& fileName) {
+        if (fileName.size() >= 4 && fileName.substr(fileName.size() - 4) == ".txt") {
+            return fileName;
+        } else {
+            return fileName + ".txt";
+        }
+    }
+
+    static std::string trim(const std::string& s) {
+        std::string::const_iterator start = s.begin();
+        while (start != s.end() && std::isspace(*start)) {
+            ++start;
+        }
+
+        if (start == s.end()) {
+            return ""; // string is all whitespace
+        }
+
+        std::string::const_iterator end = s.end();
+        do {
+            --end;
+        } while (end != start && std::isspace(*end));
+
+        return std::string(start, end + 1);
+    }
     // static std::string stringFromAlphabetIndices(const std::vector<int>& indices) {
     //     std::string result;
     //     result.reserve(indices.size());

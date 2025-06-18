@@ -1,5 +1,8 @@
 #pragma once
+#include "cipher.hpp"
+#include "entry.hpp"
 #include<string>
+#include<vector>
 
 struct PasswordFile{
 public:
@@ -12,9 +15,32 @@ public:
     std::string getPassword() const{
         return password;
     }
+
+    void setCipher(Cipher* cipher_ptr_new){
+        cipher_ptr = cipher_ptr_new;
+    }
+
+    Cipher* getCipherPtr() const{
+        return cipher_ptr;
+    }
+
+    std::string getID() const{
+        return ID;
+    }
+
+    std::vector<Entry>& getEntries(){
+        return entries;
+    }
+
+    std::string getConfig() const{
+        return config;
+    }
+
 private:
     std::string fileName;
     std::string ID;
     std::string password;
     std::string config;
+    std::vector<Entry> entries;
+    Cipher* cipher_ptr;
 };

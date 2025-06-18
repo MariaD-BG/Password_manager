@@ -111,7 +111,7 @@ int main()
     // pm1.create("test.txt", "CAESAR", "password_test", "test_args");
     // pm1.open("test.txt", "password_test");
 
-    std::cout<<"------------------";
+    std::cout<<"------------------\n";
     CommandProcessor processor(pm1); // Pass the reference
     processor.run();
 

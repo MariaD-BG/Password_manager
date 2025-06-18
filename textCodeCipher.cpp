@@ -91,3 +91,7 @@ bool TextCodeCipher::validateConfig(const std::string& config){
     file.seekg(0, std::ios::end);
     return file.tellg() > 0;
 }
+
+Cipher* TextCodeCipher::createCipherFromConfig(const std::string& config) {
+    return new TextCodeCipher(config, Source::FromFile);
+}

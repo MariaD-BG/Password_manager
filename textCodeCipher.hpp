@@ -33,6 +33,7 @@ public:
     void loadConfig(std::istream& in) override;
 
     static bool validateConfig(const std::string& config);
+    static Cipher* createCipherFromConfig(const std::string& config);
 
 
 private:

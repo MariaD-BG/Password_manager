@@ -1,4 +1,5 @@
 #include "commandProcessor.hpp"
+#include "utils.hpp"
 
 void CommandProcessor::run() {
     std::string line;
@@ -21,6 +22,7 @@ void CommandProcessor::process(const std::string& line) {
         iss >> name >> cipher >> pass;
         std::getline(iss, args); 
         
+        args = Utils::trim(args);
         manager.create(name, cipher, pass, args);
     } else if (cmd == "open") {
         std::string name, pass;

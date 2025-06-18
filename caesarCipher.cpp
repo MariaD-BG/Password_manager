@@ -53,6 +53,9 @@ void CaesarCipher::loadConfig(std::istream& in) {
 }
 
 bool CaesarCipher::validateConfig(const std::string& config){
+
+    // std::cout<<"Running CAESAR config check on string: "<<config<<" of len "<<config.size()<<" and empty is "<<config.empty()<<"\n";
+
     if (config.empty()) return false;
 
     size_t start = 0;
@@ -67,7 +70,13 @@ bool CaesarCipher::validateConfig(const std::string& config){
 
     try {
         int val = std::stoi(config);
+        return true;
     } catch (...) {
         return false;
     }
+}
+
+Cipher* CaesarCipher::createCipherFromConfig(const std::string& config) {
+    int shift = std::stoi(config);
+    return new CaesarCipher(shift);
 }
