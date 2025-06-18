@@ -78,3 +78,16 @@ void TextCodeCipher::loadConfig(std::istream& in) {
   loadAlphabetFromFile();
   calculatePositions();
 }
+
+bool TextCodeCipher::validateConfig(const std::string& config){
+    
+    std::ifstream file(config, std::ios::binary); /// binary mode is more stable for size checks
+
+    if (!file.is_open()) {
+        return false; // file doesn't exist or can't be opened
+    }
+
+    // Check if file has any content
+    file.seekg(0, std::ios::end);
+    return file.tellg() > 0;
+}

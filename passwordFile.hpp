@@ -14,7 +14,7 @@ public:
     }
 private:
     std::string fileName;
-    std::string password;
     std::string ID;
+    std::string password;
     std::string config;
 };

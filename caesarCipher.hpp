@@ -14,6 +14,9 @@ public:
     std::string  id()       const override { return "CAESAR"; }
     void saveConfig(std::ostream& out) const override;
     void loadConfig(std::istream& in) override;
+        
+    static bool validateConfig(const std::string& config);
+
 
 private:
     int shift;

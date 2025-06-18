@@ -68,37 +68,35 @@ void HillCipher::saveConfig(std::ostream& out) const {
   }
 }
 
-// Read exactly the same format, then re‐assign `matrix`.
-// We assume the stream is positioned at the first digit of ‘n’.
 void HillCipher::loadConfig(std::istream& in) {
   int n;
   if (!(in >> n)) 
     throw std::runtime_error("HillCipher::loadConfig: couldn't read dimension");
 
-  // discard rest of line (the '\n')
   {
     std::string dummy;  
     std::getline(in, dummy);
   }
-
-  // Read n×n ints
+  
   std::vector<std::vector<int>> mat(n, std::vector<int>(n));
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
       if (!(in >> mat[i][j]))
         throw std::runtime_error("HillCipher::loadConfig: couldn't read matrix entry");
-      // optional: fold into [0..94] if you want
+      
       mat[i][j] %= 95;
       if (mat[i][j] < 0) mat[i][j] += 95;
     }
-    // discard the remainder of this line’s newline
+    
     std::string dummy;
     std::getline(in, dummy);
   }
 
-  // Rebuild your key‐matrix
   matrix = MatrixSquare(mat);
 
-  // (Your decrypt() calls matrix.inverseMod95() on the fly,
-  //  so you don’t have to store the inverse here.)
+}
+
+bool HillCipher::validateConfig(const std::string& config){
+
+  
 }

@@ -9,6 +9,7 @@
 #include "encryptedMessage.hpp"
 #include "passwordManager.hpp"
 #include "passwordFile.hpp"
+#include "commandProcessor.hpp"
 
 int main()
 {
@@ -107,10 +108,12 @@ int main()
     }
 
     PasswordManager& pm1 = PasswordManager::getInstance();
-    pm1.create("test.txt", "CAESAR", "password_test", "test_args");
-    pm1.open("test.txt", "password_test");
+    // pm1.create("test.txt", "CAESAR", "password_test", "test_args");
+    // pm1.open("test.txt", "password_test");
 
-
+    std::cout<<"------------------";
+    CommandProcessor processor(pm1); // Pass the reference
+    processor.run();
 
 
     // CaesarCipher cipher1(3); // shift by 3

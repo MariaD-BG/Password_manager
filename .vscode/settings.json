@@ -112,6 +112,7 @@
     "buffer": "cpp",
     "netfwd": "cpp",
     "ratio": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "sstream": "cpp"
   }
 }

@@ -51,3 +51,23 @@ void CaesarCipher::loadConfig(std::istream& in) {
     std::getline(in, dump);
     shift = eval_casted_shift(s);
 }
+
+bool CaesarCipher::validateConfig(const std::string& config){
+    if (config.empty()) return false;
+
+    size_t start = 0;
+    if (config[0] == '-') {
+        if (config.size() == 1) return false; // just "-"
+        start = 1;
+    }
+
+    for (size_t i = start; i < config.size(); ++i) {
+        if (!std::isdigit(config[i])) return false;
+    }
+
+    try {
+        int val = std::stoi(config);
+    } catch (...) {
+        return false;
+    }
+}

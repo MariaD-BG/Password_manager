@@ -13,6 +13,8 @@ public:
     virtual void saveConfig(std::ostream& out) const = 0;
     virtual void loadConfig(std::istream& in) = 0;
 
+    static bool validateConfig(const std::string& config);
+
 protected:
     static constexpr unsigned int smallestASCII = 32;
     static constexpr unsigned int largestASCII = 126;

@@ -19,11 +19,13 @@ void CommandProcessor::process(const std::string& line) {
     if (cmd == "create") {
         std::string name, cipher, pass, args;
         iss >> name >> cipher >> pass;
-        std::getline(iss, args); // optional args
+        std::getline(iss, args); 
+        
         manager.create(name, cipher, pass, args);
     } else if (cmd == "open") {
         std::string name, pass;
         iss >> name >> pass;
+        
         manager.open(name, pass);
     } else if (cmd == "save") {
         std::string site, user, pass;
