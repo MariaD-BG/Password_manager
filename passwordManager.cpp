@@ -73,7 +73,7 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 void PasswordManager::open(const std::string& fileName, const std::string& password){
     size_t numFiles = files.size();
     std::string fileNameNew = Utils::fixTxtExtension(fileName);
-    std::cout<<"There are "<<numFiles<<" files in collection\n";
+    // std::cout<<"There are "<<numFiles<<" files in collection\n";
     for(size_t i=0;i<numFiles;i++){
         if(files[i].getName() == fileNameNew){
             if(files[i].getPassword() == password){
@@ -131,15 +131,147 @@ void PasswordManager::save(const std::string& website, const std::string& user, 
 }
 
 void PasswordManager::load(const std::string& website, const std::string& user) {
-    // TODO: Implement this
+    if (!current_open) {
+        throw std::runtime_error("No password file is open.");
+    }
+
+    bool isCaesar = (current_open->getID() == "CAESAR");
+    Cipher* cipher = current_open->getCipherPtr();
+    const auto& entries = current_open->getEntries();
+
+    bool found = false;
+
+    if (!user.empty()) {
+        // Case 1: Specific user
+        for (const Entry& entry : entries) {
+            if (entry.website == website && entry.user == user) {
+                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
+                std::string decrypted = cipher->decrypt(enc);
+                std::cout << "Password for " << website << ", user " << user << ": " << decrypted << "\n";
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            std::cout << "No password found for site " << website << " and user " << user << ".\n";
+        }
+    } else {
+        // Case 2: No user specified, show all for site
+        for (const Entry& entry : entries) {
+            if (entry.website == website) {
+                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
+                std::string decrypted = cipher->decrypt(enc);
+                std::cout << "User: " << entry.user << " Password: " << decrypted << "\n";
+                found = true;
+            }
+        }
+        if (!found) {
+            std::cout << "No users found for site " << website << ".\n";
+        }
+    }
 }
 
 void PasswordManager::update(const std::string& website, const std::string& user, const std::string& newPass) {
-    // TODO: Implement this
+    if (!current_open) {
+        std::cout << "No password file is open.\n";
+        return;
+    }
+
+    std::vector<Entry>& entries = current_open->getEntries();
+    Cipher* cipher = current_open->getCipherPtr();
+    bool isCaesar = (current_open->getID() == "CAESAR");
+    bool found = false;
+
+    for (Entry& entry : entries) {
+        if (entry.website == website && entry.user == user) {
+            found = true;
+
+            // Encrypt new password as would be stored
+            EncryptedMessage newEnc = cipher->encrypt(newPass);
+            std::string newEncoded = newEnc.serialize(isCaesar);
+
+            // If new enc matches the old one, don't allow update:
+            if (entry.encodedPass == newEncoded) {
+                std::cout << "New password cannot be the same as the old password for site " << website << ", user " << user << ".\n";
+                return;
+            }
+
+            // Otherwise, update and write all back to file
+            entry.encodedPass = newEncoded;
+
+            // Save everything back to the file
+            std::ofstream out(current_open->getName());
+            if (!out) throw std::runtime_error("Failed to open password file for writing.");
+
+            out << "CIPHER " << current_open->getID() << "\n";
+            out << "PASSWORD " << current_open->getPassword() << "\n";
+            out << "ARGS " << current_open->getConfig() << "\n";
+            for (const Entry& e : entries) {
+                out << e.website << " " << e.user << " " << e.encodedPass << "\n";
+            }
+
+            std::cout << "Password updated for site " << website << ", user " << user << ".\n";
+            return;
+        }
+    }
+
+    // If not found:
+    if (!found) {
+        std::cout << "No password found for site " << website << " and user " << user << ".\n";
+    }
 }
 
 void PasswordManager::del(const std::string& website, const std::string& user) {
-    // TODO: Implement this
+    if (!current_open) {
+        std::cout << "No password file is open.\n";
+        return;
+    }
+
+    std::vector<Entry>& entries = current_open->getEntries();
+
+    if (!user.empty()) {
+        // ---- Delete a single (website, user) entry
+        bool found = false;
+        for (size_t i = 0; i < entries.size(); ++i) {
+            if (entries[i].website == website && entries[i].user == user) {
+                entries.erase(entries.begin() + i);
+                std::cout << "Deleted password for " << website << ", user " << user << ".\n";
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            std::cout << "No password found for site " << website << " and user " << user << ".\n";
+            return;
+        }
+    } else {
+        // ---- Delete all entries for a website
+        bool anyDeleted = false;
+        // Iterate backwards for safe erasing
+        for (int i = static_cast<int>(entries.size()) - 1; i >= 0; --i) {
+            if (entries[i].website == website) {
+                entries.erase(entries.begin() + i);
+                anyDeleted = true;
+            }
+        }
+        if (!anyDeleted) {
+            std::cout << "No passwords found for site " << website << ".\n";
+            return;
+        } else {
+            std::cout << "Deleted all passwords for site " << website << ".\n";
+        }
+    }
+
+    // --- Rewrite the password file (header + entries)
+    std::ofstream out(current_open->getName());
+    if (!out) throw std::runtime_error("Failed to open password file for writing.");
+
+    out << "CIPHER " << current_open->getID() << "\n";
+    out << "PASSWORD " << current_open->getPassword() << "\n";
+    out << "ARGS " << current_open->getConfig() << "\n";
+    for (const Entry& e : entries) {
+        out << e.website << " " << e.user << " " << e.encodedPass << "\n";
+    }
 }
 
 bool PasswordManager::nameTaken(const std::string& name){

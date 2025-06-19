@@ -84,7 +84,7 @@ bool TextCodeCipher::validateConfig(const std::string& config){
     std::ifstream file(config, std::ios::binary); /// binary mode is more stable for size checks
 
     if (!file.is_open()) {
-        return false; // file doesn't exist or can't be opened
+        throw std::invalid_argument("File does not exist or can't be opened!");
     }
 
     // Check if file has any content

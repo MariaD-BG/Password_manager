@@ -1,5 +1,4 @@
 CIPHER CAESAR
 PASSWORD pass
 ARGS 3
-url Maria sdvv4
-url Maria2 sdvv6
+url Maria sdvv

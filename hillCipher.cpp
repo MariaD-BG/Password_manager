@@ -28,7 +28,6 @@ EncryptedMessage HillCipher::encrypt(const std::string& text){
         Utils::writeIntToBuffer(encrypted, res[i][0], i*sizeof(int32_t));
     }
 
-    std::cout<<"Returning from encrypt\n";
     return EncryptedMessage(encrypted,4*padded_len, text.size());
 
 }
@@ -51,7 +50,6 @@ std::string HillCipher::decrypt(const EncryptedMessage& msg){
     result.reserve(msg.getLen()/4);
 
     for(size_t i=0;i<msg.getLenOriginal();i++){
-        std::cout<<res[i][0]<<" ";
         result+=static_cast<char>(Utils::mod95ToAscii(res[i][0]));
     }
 

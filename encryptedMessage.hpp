@@ -55,7 +55,7 @@ public:
         }
     }
 
-    friend EncryptedMessage deserialize(const std::string& data, bool asString) {
+    static EncryptedMessage deserialize(const std::string& data, bool asString) {
         if (asString) {
             size_t len = data.size();
             unsigned char* buf = new unsigned char[len];
