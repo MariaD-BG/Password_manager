@@ -1,3 +1,0 @@
-CIPHER HILL
-PASSWORD pass
-ARGS alphabet_n.txt

@@ -1,3 +1,0 @@
-CIPHER TEXTCODE
-PASSWORD pass
-ARGS alphabet.txt

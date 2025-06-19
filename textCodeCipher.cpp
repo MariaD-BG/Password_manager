@@ -34,7 +34,7 @@ EncryptedMessage TextCodeCipher::encrypt(const std::string& text){
             Utils::writeIntToBuffer(encrypted, positions[(int)text[i] - smallestASCII], i*sizeof(int32_t));
         }else{
             delete[] encrypted;
-            throw "Character out of scope";
+            throw std::invalid_argument("Character out of scope");
         }
     }
     // std::cout<<"\n";
