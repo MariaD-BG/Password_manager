@@ -55,7 +55,6 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
     fileOut.close();
 
     PasswordFile newFile(fileNameNew, cipherType, password, cipherArgs);
-    // newFile.setCipher();
 
     if (cipherType == "CAESAR") {
         newFile.setCipher(CaesarCipher::createCipherFromConfig(cipherArgs));
@@ -73,7 +72,7 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 void PasswordManager::open(const std::string& fileName, const std::string& password){
     size_t numFiles = files.size();
     std::string fileNameNew = Utils::fixTxtExtension(fileName);
-    // std::cout<<"There are "<<numFiles<<" files in collection\n";
+
     for(size_t i=0;i<numFiles;i++){
         if(files[i].getName() == fileNameNew){
             if(files[i].getPassword() == password){
@@ -86,7 +85,7 @@ void PasswordManager::open(const std::string& fileName, const std::string& passw
             }
         }
     }
-    // std::cerr<<"File not found! Command unsuccessful!\n";
+
     throw std::runtime_error("File not found! Command unsuccessful!");
 }
 
@@ -140,7 +139,7 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
     bool found = false;
 
     if (!user.empty()) {
-        // Case 1: Specific user
+        //  For Specific user:
         for (const Entry& entry : entries) {
             if (entry.website == website && entry.user == user) {
                 EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
@@ -154,7 +153,7 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
             std::cout << "No password found for site " << website << " and user " << user << ".\n";
         }
     } else {
-        // Case 2: No user specified, show all for site
+        // If no user is specified, show all for site
         for (const Entry& entry : entries) {
             if (entry.website == website) {
                 EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
@@ -228,7 +227,7 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
     std::vector<Entry>& entries = files[current_open_idx].getEntries();
 
     if (!user.empty()) {
-        // ---- Delete a single (website, user) entry
+        // Delete a single (website, user) entry
         bool found = false;
         for (size_t i = 0; i < entries.size(); ++i) {
             if (entries[i].website == website && entries[i].user == user) {
@@ -243,7 +242,7 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
             return;
         }
     } else {
-        // ---- Delete all entries for a website
+        // Delete all entries for a website
         bool anyDeleted = false;
         // Iterate backwards for safe erasing
         for (int i = static_cast<int>(entries.size()) - 1; i >= 0; --i) {
@@ -260,7 +259,7 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
         }
     }
 
-    // --- Rewrite the password file (header + entries)
+    // Rewrite the password file 
     std::ofstream out(files[current_open_idx].getName());
     if (!out) throw std::runtime_error("Failed to open password file for writing.");
 
