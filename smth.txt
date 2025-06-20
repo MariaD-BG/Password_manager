@@ -1,4 +1,3 @@
-CIPHER HILL
+CIPHER CAESAR
 PASSWORD pass
-ARGS matrix_key.txt
-url Armyanov 4|15,0,0,0,63,0,0,0,28,0,0,0,74,0,0,0,80,0,0,0
+ARGS 2

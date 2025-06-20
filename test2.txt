@@ -1,0 +1,3 @@
+CIPHER TEXTCODE
+PASSWORD pass
+ARGS input_files/alphabet.txt

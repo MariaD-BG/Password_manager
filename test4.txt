@@ -1,0 +1,5 @@
+CIPHER TEXTCODE
+PASSWORD pass
+ARGS input_files/alphabet.txt
+google.com Armyanov 6|24,0,0,0,2,0,0,0,7,0,0,0,11,0,0,0,2,0,0,0,0,0,0,0
+google.com Petkova 14|14,0,0,0,2,0,0,0,13,0,0,0,24,0,0,0,5,0,0,0,23,0,0,0,2,0,0,0,11,0,0,0,24,0,0,0,2,0,0,0,7,0,0,0,11,0,0,0,2,0,0,0,0,0,0,0

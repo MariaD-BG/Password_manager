@@ -85,7 +85,7 @@ bool HillCipher::validateConfig(const std::string& config){
     std::vector<std::vector<int>> matrix(n, std::vector<int>(n, 0));
     for (int i = 0; i < n; ++i) {
         if (!std::getline(file, line)) return false;
-        int count = 0;
+
         size_t start = 0;
         for (int j = 0; j < n; ++j) {
             // Skip leading spaces
