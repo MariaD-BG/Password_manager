@@ -1,5 +1,0 @@
-CIPHER CAESAR
-PASSWORD mypass
-ARGS 3
-example.com Petkova sdvvDEF
-example.com Stanimir sdvv[\]
