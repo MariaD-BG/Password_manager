@@ -13,8 +13,9 @@ public:
     virtual void saveConfig(std::ostream& out) const = 0;
     virtual void loadConfig(std::istream& in) = 0;
 
-    static bool validateConfig(const std::string& config);
-    static Cipher* createCipherFromConfig(const std::string& config);
+    static bool validateConfig(const std::string& type, const std::string& config);
+    static Cipher* createCipherFromConfig(const std::string& type, const std::string& config);
+    static bool encryptedAsString(const std::string& type);
 
 protected:
     static constexpr unsigned int smallestASCII = 32;

@@ -17,6 +17,9 @@ public:
     }
 
     void setCipher(Cipher* cipher_ptr_new){
+         if (cipher_initialized) {
+            throw std::logic_error("Cipher has already been set for this file and cannot be changed.");
+        }
         cipher_ptr = cipher_ptr_new;
     }
 
@@ -43,4 +46,5 @@ private:
     std::string config;
     std::vector<Entry> entries;
     Cipher* cipher_ptr;
+    bool cipher_initialized = false;
 };

@@ -18,31 +18,12 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 
     bool validity;
 
-    if (cipherType == "CAESAR") {
-        try{
-            validity = CaesarCipher::validateConfig(cipherArgs);
-        }catch(const std::exception& e){
-            throw std::invalid_argument("Config not valid for cipher type " + cipherType + ":" + e.what());
-        }
-        if(!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
-    } else if (cipherType == "TEXTCODE") {
-        try{
-            validity = TextCodeCipher::validateConfig(cipherArgs);
-        }catch(const std::exception& e){
-            throw std::invalid_argument("Config not valid for cipher type " + cipherType + ":" + e.what());
-        }
-        if(!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
-    } else if (cipherType == "HILL") {
-        try{
-            validity = HillCipher::validateConfig(cipherArgs);
-        }catch(const std::exception& e){
-            throw std::invalid_argument("Config not valid for cipher type " + cipherType + ":" + e.what());
-        }
-        if(!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
-    } else {
-        throw std::invalid_argument("Unknown cipher type: " + cipherType);
+    try{
+        validity = Cipher::validateConfig(cipherType, cipherArgs);
+    }catch(const std::exception& e){
+        throw std::invalid_argument("Config not valid for cipher type " + cipherType + ":" + e.what());
     }
-    
+    if(!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
 
     std::ofstream fileOut(fileNameNew); 
     if (!fileOut) {
@@ -56,13 +37,7 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 
     PasswordFile newFile(fileNameNew, cipherType, password, cipherArgs);
 
-    if (cipherType == "CAESAR") {
-        newFile.setCipher(CaesarCipher::createCipherFromConfig(cipherArgs));
-    } else if (cipherType == "TEXTCODE") {
-        newFile.setCipher(TextCodeCipher::createCipherFromConfig(cipherArgs));
-    } else if (cipherType == "HILL") {
-        newFile.setCipher(HillCipher::createCipherFromConfig(cipherArgs));
-    } 
+    newFile.setCipher(Cipher::createCipherFromConfig(cipherType, cipherArgs));
 
     files.push_back(std::move(newFile));
 
@@ -96,8 +71,7 @@ void PasswordManager::save(const std::string& website, const std::string& user, 
     std::string encodedPass;
     try {
         EncryptedMessage encoded = files[current_open_idx].getCipherPtr()->encrypt(pass);
-        if(files[current_open_idx].getID() == "CAESAR") encodedPass = encoded.serialize(true); 
-        else encodedPass = encoded.serialize(false);
+        encodedPass = encoded.serialize(Cipher::encryptedAsString(files[current_open_idx].getID()));
     } catch(const std::exception& exc) {
         throw std::runtime_error(std::string("Failed to encrypt password!") + exc.what());
     }
@@ -132,7 +106,7 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
         throw std::runtime_error("No password file is open.");
     }
 
-    bool isCaesar = (files[current_open_idx].getID() == "CAESAR");
+    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx].getID());
     Cipher* cipher = files[current_open_idx].getCipherPtr();
     const auto& entries = files[current_open_idx].getEntries();
 
@@ -142,7 +116,7 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
         //  For Specific user:
         for (const Entry& entry : entries) {
             if (entry.website == website && entry.user == user) {
-                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
+                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, encryptedAsString);
                 std::string decrypted = cipher->decrypt(enc);
                 std::cout << "Password for " << website << ", user " << user << ": " << decrypted << "\n";
                 found = true;
@@ -156,7 +130,7 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
         // If no user is specified, show all for site
         for (const Entry& entry : entries) {
             if (entry.website == website) {
-                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, isCaesar);
+                EncryptedMessage enc = EncryptedMessage::deserialize(entry.encodedPass, encryptedAsString);
                 std::string decrypted = cipher->decrypt(enc);
                 std::cout << "User: " << entry.user << " Password: " << decrypted << "\n";
                 found = true;
@@ -176,7 +150,7 @@ void PasswordManager::update(const std::string& website, const std::string& user
 
     std::vector<Entry>& entries = files[current_open_idx].getEntries();
     Cipher* cipher = files[current_open_idx].getCipherPtr();
-    bool isCaesar = (files[current_open_idx].getID() == "CAESAR");
+    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx].getID());
     bool found = false;
 
     for (Entry& entry : entries) {
@@ -185,7 +159,7 @@ void PasswordManager::update(const std::string& website, const std::string& user
 
             // Encrypt new password as would be stored
             EncryptedMessage newEnc = cipher->encrypt(newPass);
-            std::string newEncoded = newEnc.serialize(isCaesar);
+            std::string newEncoded = newEnc.serialize(encryptedAsString);
 
             // If new enc matches the old one, don't allow update:
             if (entry.encodedPass == newEncoded) {
