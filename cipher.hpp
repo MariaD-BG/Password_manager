@@ -10,8 +10,6 @@ public:
     virtual ~Cipher() = 0;
 
     virtual std::string id() const = 0;
-    virtual void saveConfig(std::ostream& out) const = 0;
-    virtual void loadConfig(std::istream& in) = 0;
 
     static bool validateConfig(const std::string& type, const std::string& config);
     static Cipher* createCipherFromConfig(const std::string& type, const std::string& config);

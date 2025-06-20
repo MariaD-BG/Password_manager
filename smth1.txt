@@ -1,0 +1,4 @@
+CIPHER HILL
+PASSWORD pass
+ARGS alphabet_n.txt
+url Niki 4|15,0,0,0,63,0,0,0,28,0,0,0,74,0,0,0,80,0,0,0

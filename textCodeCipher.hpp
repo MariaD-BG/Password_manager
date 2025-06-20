@@ -29,8 +29,6 @@ public:
     void calculatePositions();
 
     std::string  id()       const override { return "TEXTCODE"; }
-    void saveConfig(std::ostream& out) const override;
-    void loadConfig(std::istream& in) override;
 
     static bool validateConfig(const std::string& config);
     static Cipher* createCipherFromConfig(const std::string& config);

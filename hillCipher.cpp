@@ -56,45 +56,6 @@ std::string HillCipher::decrypt(const EncryptedMessage& msg){
     return result;
 }
 
-void HillCipher::saveConfig(std::ostream& out) const {
-  int n = int(matrix.get_size());
-  out << n << "\n";
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      out << matrix[i][j]
-          << (j + 1 < n ? ' ' : '\n');
-    }
-  }
-}
-
-void HillCipher::loadConfig(std::istream& in) {
-  int n;
-  if (!(in >> n)) 
-    throw std::runtime_error("HillCipher::loadConfig: couldn't read dimension");
-
-  {
-    std::string dummy;  
-    std::getline(in, dummy);
-  }
-  
-  std::vector<std::vector<int>> mat(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      if (!(in >> mat[i][j]))
-        throw std::runtime_error("HillCipher::loadConfig: couldn't read matrix entry");
-      
-      mat[i][j] %= 95;
-      if (mat[i][j] < 0) mat[i][j] += 95;
-    }
-    
-    std::string dummy;
-    std::getline(in, dummy);
-  }
-
-  matrix = MatrixSquare(mat);
-
-}
-
 bool HillCipher::validateConfig(const std::string& config){
   
     std::ifstream file(config);

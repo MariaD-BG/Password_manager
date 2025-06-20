@@ -64,21 +64,6 @@ void TextCodeCipher::loadAlphabetFromFile() {
   alphabetText = std::move(s);
 }
 
-void TextCodeCipher::saveConfig(std::ostream& out) const {
-  out << textFilePath << "\n";
-}
-
-// read the path back, reload file, rebuild
-void TextCodeCipher::loadConfig(std::istream& in) {
-  std::string path;
-  std::getline(in, path);
-  if (path.empty())
-    throw std::runtime_error("Empty path in TextCodeCipher config");
-  textFilePath = path;
-  loadAlphabetFromFile();
-  calculatePositions();
-}
-
 bool TextCodeCipher::validateConfig(const std::string& config){
     
     std::ifstream file(config, std::ios::binary); /// binary mode is more stable for size checks

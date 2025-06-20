@@ -10,8 +10,6 @@ public:
     ~HillCipher() override {}
 
     virtual std::string id() const { return "HILL"; }
-    virtual void saveConfig(std::ostream& out) const;
-    virtual void loadConfig(std::istream& in);
 
     static bool validateConfig(const std::string& config);
     static Cipher* createCipherFromConfig(const std::string& config);
