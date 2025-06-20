@@ -19,4 +19,5 @@ protected:
     static constexpr unsigned int smallestASCII = 32;
     static constexpr unsigned int largestASCII = 126;
     static constexpr int RANGE = largestASCII - smallestASCII +1;
+    /// This is used to have a flexible range of allowed characters
 };

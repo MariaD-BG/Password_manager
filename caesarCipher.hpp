@@ -19,5 +19,4 @@ public:
 private:
     int shift;
     char shiftChar(char ch, int shift);
-    int char_type(char ch);
 };

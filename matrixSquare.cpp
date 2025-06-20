@@ -4,7 +4,7 @@ MatrixSquare MatrixSquare::inverseMod95() const {
     int det = (*this).determinantMod95();
     int detInv = Utils::modInverse95(det);
 
-    if(detInv==0) throw("Matrix not invertible");
+    if(detInv==0) throw std::invalid_argument("Matrix not invertible");
 
     MatrixSquare adj = this->adjugate();
 

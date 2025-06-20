@@ -5,12 +5,16 @@
 
 Cipher::~Cipher() {}
 
+/// The idea here is to resembe a static factory pattern
+
 bool Cipher::validateConfig(const std::string& type, const std::string& config){
     if(type == "CAESAR") return CaesarCipher::validateConfig(config);
     else if(type == "TEXTCODE") return TextCodeCipher::validateConfig(config);
     else if(type == "HILL") return HillCipher::validateConfig(config);
     else throw std::invalid_argument("Unknown cipher type: " + type);
 }
+
+/// A central factory function (using if/else) selects which derived cipher to construct based on runtime data, and then returns a pointer to the base class
 
 Cipher* Cipher::createCipherFromConfig(const std::string& type, const std::string& config){
     if(type == "CAESAR") return CaesarCipher::createCipherFromConfig(config);

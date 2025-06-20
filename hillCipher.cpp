@@ -15,8 +15,6 @@ EncryptedMessage HillCipher::encrypt(const std::string& text){
     std::vector<int> vector_padded = Utils::asciiCodesFromString(text_padded);
 
     Matrix col_text = Matrix(vector_padded, Orientation::Column);
-    
-    matrix.print();
 
     MatrixSquare key = matrix.blockDiag(padded_len/n);
 
@@ -57,67 +55,66 @@ std::string HillCipher::decrypt(const EncryptedMessage& msg){
 }
 
 bool HillCipher::validateConfig(const std::string& config){
-  
+    
     std::ifstream file(config);
     if (!file.is_open()) {
         throw std::invalid_argument("File does not exist!") ;
     }
 
     std::string line;
-    
-    // Read the first line
+
+    // Read the first line (matrix size n)
     if (!std::getline(file, line)) {
         throw std::invalid_argument("First line of file is empty!") ;
     }
-
-    // Try to convert it to an integer
     int n = 0;
     try {
         size_t pos;
         n = std::stoi(line, &pos);
-        // Make sure there's nothing else on the line
-        if (pos != line.length()){
+        if (pos != line.length()) {
           throw std::invalid_argument("Too many arguments on line 1!") ;
         }
     } catch (...) {
         throw std::invalid_argument("Could not get matrix size!") ;
     }
-
     if (n <= 0){
       throw std::invalid_argument("Matrix size is negative!") ;
     }
 
-    // Read the next n lines
+    // Parse the next n lines as matrix
+    std::vector<std::vector<int>> matrix(n, std::vector<int>(n, 0));
     for (int i = 0; i < n; ++i) {
         if (!std::getline(file, line)) return false;
-
         int count = 0;
         size_t start = 0;
-        while (start < line.length()) {
-            // Skip spaces
+        for (int j = 0; j < n; ++j) {
+            // Skip leading spaces
             while (start < line.length() && line[start] == ' ') start++;
-
-            // Find number
+            if (start >= line.length()) return false;
+            // Find the end of the number
             size_t end = start;
-            while (end < line.length() && (isdigit(line[end]) || line[end] == '-' || line[end] == '+')) end++;
-
-            if (start == end) break; // No more numbers
-
+            if (line[end] == '-' || line[end] == '+') ++end;
+            while (end < line.length() && std::isdigit(line[end])) ++end;
+            if (start == end) return false;
             try {
-                std::stoi(line.substr(start, end - start));
-                count++;
+                int v = std::stoi(line.substr(start, end - start));
+                matrix[i][j] = ((v % 95) + 95) % 95;
             } catch (...) {
                 return false;
             }
-
             start = end;
         }
-
-        if (count != n) return false;
+        // Check for any extra junk on the line
+        while (start < line.length() && line[start] == ' ') ++start;
+        if (start < line.length()) return false;
     }
 
-    return true;
+    // Try to compute inverse (if not invertible: fail)
+    
+    MatrixSquare sq(matrix);
+    if(sq.determinantMod95() == 0) throw std::invalid_argument("Matrix not invertible!");
 
+    return true;
 }
 
 Cipher* HillCipher::createCipherFromConfig(const std::string& config) {

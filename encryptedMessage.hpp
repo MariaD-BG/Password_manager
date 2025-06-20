@@ -40,8 +40,6 @@ public:
         return len_original;
     }
 
-    // In EncryptedMessage.cpp
-
     std::string serialize(bool asString) const {
         if (asString) {
             return std::string(reinterpret_cast<const char*>(encrypted), len);
@@ -62,7 +60,7 @@ public:
             for (size_t i = 0; i < len; ++i) buf[i] = static_cast<unsigned char>(data[i]);
             return EncryptedMessage(buf, len, len);
         } else {
-            // Parse "<origLen>|num1,num2,num3,..."
+            // Parsing "<originalLen>|num1,num2,num3,..."
             size_t bar = data.find('|');
             if (bar == std::string::npos)
                 throw std::runtime_error("Invalid EncryptedMessage: missing |");

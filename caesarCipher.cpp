@@ -42,13 +42,11 @@ std::string CaesarCipher::decrypt(const EncryptedMessage& msg){
 }
 
 bool CaesarCipher::validateConfig(const std::string& config){
-
-    // std::cout<<"Running CAESAR config check on string: "<<config<<" of len "<<config.size()<<" and empty is "<<config.empty()<<"\n";
-
     if (config.empty()) return false;
 
     size_t start = 0;
     if (config[0] == '-') {
+        /// Supporting negative numbers
         if (config.size() == 1) return false; // just "-"
         start = 1;
     }
@@ -61,6 +59,7 @@ bool CaesarCipher::validateConfig(const std::string& config){
         int val = std::stoi(config);
         return true;
     } catch (...) {
+        /// Could not convert value to int -- probably too big
         return false;
     }
 }

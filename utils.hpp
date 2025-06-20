@@ -93,17 +93,6 @@ public:
 
         return std::string(start, end + 1);
     }
-    // static std::string stringFromAlphabetIndices(const std::vector<int>& indices) {
-    //     std::string result;
-    //     result.reserve(indices.size());
-
-    //     for (int i=0;i<indices.size();i++) {
-    //         assert(indices[i] < 0 || indices[i] > 25);
-    //         result += static_cast<char>('A' + i);
-    //     }
-
-    //     return result;
-    // }
 
     Utils() = delete; ///Static-only class: no instances
 };

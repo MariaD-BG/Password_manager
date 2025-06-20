@@ -76,10 +76,6 @@ public:
         }
     }
 
-    // void mod95_matrix(){
-    //     mod95(matrix);
-    // }
-
 
 protected:
 
@@ -105,6 +101,4 @@ protected:
     std::vector< std::vector<int> > matrix;
 
     static constexpr int RANGE = 95;
-
-
 };

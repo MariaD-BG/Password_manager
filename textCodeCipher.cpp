@@ -21,23 +21,18 @@ EncryptedMessage TextCodeCipher::encrypt(const std::string& text){
         pos_calculated = true;
     }
 
-    // for(int i=0;i<largestASCII - smallestASCII + 1;i++){
-    //     std::cout<<positions[i]<<" ";
-    // }
-    // std::cout<<"\n----------------------\n";
-
     int len = text.size();
     unsigned char* encrypted = new unsigned char[4*len];
     for(int i=0;i<len;i++){
         if(positions[(int)text[i] - smallestASCII]>=0){
-            // std::cout<<positions[(int)text[i] - smallestASCII]<<" ";
+
             Utils::writeIntToBuffer(encrypted, positions[(int)text[i] - smallestASCII], i*sizeof(int32_t));
         }else{
             delete[] encrypted;
             throw std::invalid_argument("Character out of scope");
         }
     }
-    // std::cout<<"\n";
+
     return EncryptedMessage(encrypted, 4*len, len);
 }
 

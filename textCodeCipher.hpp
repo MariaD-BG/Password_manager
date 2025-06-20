@@ -4,7 +4,6 @@
 
 class TextCodeCipher : public Cipher{
 public:
-    // TextCodeCipher(const std::string alphabetText) : alphabetText(alphabetText) {}
 
     enum class Source { FromFile, FromAlphabet };
 
@@ -28,7 +27,7 @@ public:
 
     void calculatePositions();
 
-    std::string  id()       const override { return "TEXTCODE"; }
+    std::string id() const override { return "TEXTCODE"; }
 
     static bool validateConfig(const std::string& config);
     static Cipher* createCipherFromConfig(const std::string& config);
