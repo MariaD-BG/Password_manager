@@ -29,5 +29,5 @@ private:
 private:
 
     int current_open_idx = -1;
-    std::vector<PasswordFile> files;
+    std::vector<PasswordFile*> files;
 };

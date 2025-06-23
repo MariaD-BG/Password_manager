@@ -8,7 +8,8 @@
 #include<fstream>
 #include<iostream>
 
-void PasswordManager::create(const std::string& fileName, const std::string& cipherType, const std::string& password, const std::string& cipherArgs) {
+void PasswordManager::create(const std::string& fileName, const std::string& cipherType,
+                             const std::string& password, const std::string& cipherArgs) {
 
     std::string fileNameNew = Utils::fixTxtExtension(fileName);
     /// This is done in order to impose that the file open will be .txt
@@ -24,32 +25,31 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 
     /// We validate the cipher arguments before actually creating the file
     bool validity;
-    try{
+    try {
         validity = Cipher::validateConfig(cipherType, cipherArgs);
-    }catch(const std::exception& e){
+    } catch (const std::exception& e) {
         throw std::invalid_argument("Config not valid for cipher type " + cipherType + ":" + e.what());
     }
-    if(!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
+    if (!validity) throw std::invalid_argument("Config not valid for cipher type " + cipherType);
 
     /// Once the configuration is validated, we create the file
     /// We ensured fileNameNew has a .txt extension
-    std::ofstream fileOut(fileNameNew); 
+    std::ofstream fileOut(fileNameNew);
     if (!fileOut) {
         throw std::runtime_error("Failed to create file: " + fileNameNew);
     }
     fileOut << "CIPHER " << cipherType << "\n";
-    fileOut << "PASSWORD " << password << "\n"; 
+    fileOut << "PASSWORD " << password << "\n";
     fileOut << "ARGS " << cipherArgs << "\n";
-
     fileOut.close();
 
-    /// We create a PasswordFile entry and add it to the PasswordManager
-    PasswordFile newFile(fileNameNew, cipherType, password, cipherArgs);
+    /// We create a PasswordFile* entry on the heap and add it to the PasswordManager
+    PasswordFile* newFile = new PasswordFile(fileNameNew, cipherType, password, cipherArgs);
 
-    newFile.setCipher(Cipher::createCipherFromConfig(cipherType, cipherArgs));
+    newFile->setCipher(Cipher::createCipherFromConfig(cipherType, cipherArgs));
 
-    files.push_back(std::move(newFile));
-    
+    files.push_back(newFile);
+
     std::cout << "File '" << fileNameNew << "' created successfully.\n";
 }
 
@@ -62,11 +62,11 @@ void PasswordManager::open(const std::string& fileName, const std::string& passw
 
     /// We iterate over the PasswordFile objects and look for a match with the file we want to open
     for(size_t i=0;i<numFiles;i++){
-        if(files[i].getName() == fileNameNew){
-            if(files[i].getPassword() == password){
+        if(files[i]->getName() == fileNameNew){
+            if(files[i]->getPassword() == password){
                 /// We store the index of the current open file as an attribute to our PasswordManager
                 current_open_idx = i;
-                std::cout<<"File '" + files[i].getName() +"' opened successfully\n";
+                std::cout<<"File '" + files[i]->getName() +"' opened successfully\n";
                 return;
             }else{
                 /// If password from user is incorrect we do not grant access to the file
@@ -89,14 +89,14 @@ void PasswordManager::save(const std::string& website, const std::string& user, 
 
     std::string encodedPass;
     try {
-        EncryptedMessage encoded = files[current_open_idx].getCipherPtr()->encrypt(pass);
-        encodedPass = encoded.serialize(Cipher::encryptedAsString(files[current_open_idx].getID()));
+        EncryptedMessage encoded = files[current_open_idx]->getCipherPtr()->encrypt(pass);
+        encodedPass = encoded.serialize(Cipher::encryptedAsString(files[current_open_idx]->getID()));
     } catch(const std::exception& exc) {
         throw std::runtime_error(std::string("Failed to encrypt password!") + exc.what());
     }
 
     /// Below we ensure that if we try to save a password for a user and website that already exist, we ask the user what to do. If they decide, we update the password, otherwise keep it.
-    std::vector<Entry>& entries = files[current_open_idx].getEntries();
+    std::vector<Entry>& entries = files[current_open_idx]->getEntries();
     bool found = false;
     for (Entry& entry : entries) {
         if (entry.website == website && entry.user == user) {
@@ -117,12 +117,12 @@ void PasswordManager::save(const std::string& website, const std::string& user, 
         entries.push_back({website, user, encodedPass});
     }
 
-    std::ofstream out(files[current_open_idx].getName());
+    std::ofstream out(files[current_open_idx]->getName());
     if (!out) throw std::runtime_error("Failed to open password file for writing.");
 
-    out << "CIPHER " << files[current_open_idx].getID() << "\n";
-    out << "PASSWORD " << files[current_open_idx].getPassword() << "\n";
-    out << "ARGS " << files[current_open_idx].getConfig() << "\n";
+    out << "CIPHER " << files[current_open_idx]->getID() << "\n";
+    out << "PASSWORD " << files[current_open_idx]->getPassword() << "\n";
+    out << "ARGS " << files[current_open_idx]->getConfig() << "\n";
     for (const Entry& entry : entries) {
         out << entry.website << " " << entry.user << " " << entry.encodedPass << "\n";
     }
@@ -136,9 +136,9 @@ void PasswordManager::load(const std::string& website, const std::string& user) 
         throw std::runtime_error("No password file is open.");
     }
 
-    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx].getID());
-    Cipher* cipher = files[current_open_idx].getCipherPtr();
-    const auto& entries = files[current_open_idx].getEntries();
+    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx]->getID());
+    Cipher* cipher = files[current_open_idx]->getCipherPtr();
+    const auto& entries = files[current_open_idx]->getEntries();
     /// We use auto because we need a read-only reference and this way we don't copy
 
     bool found = false;
@@ -183,9 +183,9 @@ void PasswordManager::update(const std::string& website, const std::string& user
     if(newPass.empty()) throw std::invalid_argument("Password for user and website can not be empty.");
 
 
-    std::vector<Entry>& entries = files[current_open_idx].getEntries();
-    Cipher* cipher = files[current_open_idx].getCipherPtr();
-    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx].getID());
+    std::vector<Entry>& entries = files[current_open_idx]->getEntries();
+    Cipher* cipher = files[current_open_idx]->getCipherPtr();
+    bool encryptedAsString = Cipher::encryptedAsString(files[current_open_idx]->getID());
     bool found = false;
 
     for (Entry& entry : entries) {
@@ -206,12 +206,12 @@ void PasswordManager::update(const std::string& website, const std::string& user
             entry.encodedPass = newEncoded;
 
             // Save everything back to the file
-            std::ofstream out(files[current_open_idx].getName());
+            std::ofstream out(files[current_open_idx]->getName());
             if (!out) throw std::runtime_error("Failed to open password file for writing.");
 
-            out << "CIPHER " << files[current_open_idx].getID() << "\n";
-            out << "PASSWORD " << files[current_open_idx].getPassword() << "\n";
-            out << "ARGS " << files[current_open_idx].getConfig() << "\n";
+            out << "CIPHER " << files[current_open_idx]->getID() << "\n";
+            out << "PASSWORD " << files[current_open_idx]->getPassword() << "\n";
+            out << "ARGS " << files[current_open_idx]->getConfig() << "\n";
             for (const Entry& e : entries) {
                 out << e.website << " " << e.user << " " << e.encodedPass << "\n";
             }
@@ -233,7 +233,7 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
         return;
     }
 
-    std::vector<Entry>& entries = files[current_open_idx].getEntries();
+    std::vector<Entry>& entries = files[current_open_idx]->getEntries();
 
     if (!user.empty()) {
         // Delete a single (website, user) entry
@@ -270,12 +270,12 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
     }
 
     // Rewrite the password file 
-    std::ofstream out(files[current_open_idx].getName());
+    std::ofstream out(files[current_open_idx]->getName());
     if (!out) throw std::runtime_error("Failed to open password file for writing.");
 
-    out << "CIPHER " << files[current_open_idx].getID() << "\n";
-    out << "PASSWORD " << files[current_open_idx].getPassword() << "\n";
-    out << "ARGS " << files[current_open_idx].getConfig() << "\n";
+    out << "CIPHER " << files[current_open_idx]->getID() << "\n";
+    out << "PASSWORD " << files[current_open_idx]->getPassword() << "\n";
+    out << "ARGS " << files[current_open_idx]->getConfig() << "\n";
     for (const Entry& e : entries) {
         out << e.website << " " << e.user << " " << e.encodedPass << "\n";
     }
@@ -284,7 +284,7 @@ void PasswordManager::del(const std::string& website, const std::string& user) {
 bool PasswordManager::nameTaken(const std::string& name){
     size_t numFiles = files.size();
     for(size_t i=0;i<numFiles;i++){
-        if(files[i].getName() == name){
+        if(files[i]->getName() == name){
             return true;
         }
     }

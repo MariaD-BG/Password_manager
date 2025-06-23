@@ -9,6 +9,11 @@ public:
     
     PasswordFile(const std::string fileName, const std::string ID, const std::string password, const std::string config) : fileName(fileName), ID(ID), password(password), config(config){}
 
+    // ~PasswordFile(){
+    //     delete cipher_ptr;
+    //     cipher_ptr = nullptr;
+    // }
+
     std::string getName() const{
         return fileName;
     }
