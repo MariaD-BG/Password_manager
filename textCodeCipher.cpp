@@ -33,6 +33,8 @@ EncryptedMessage TextCodeCipher::encrypt(const std::string& text){
         }
     }
 
+    /// encrypted is deleted in the destructor of EncryptedMessage
+    /// The constructor of EncryptedMessage directly steals the pointer
     return EncryptedMessage(encrypted, 4*len, len);
 }
 

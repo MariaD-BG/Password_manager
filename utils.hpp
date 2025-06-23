@@ -38,11 +38,15 @@ public:
     }
 
     static int get_padded(int len, int mod){
+        /// pads the length to a multiple of mod
+        /// Used for HILL cipher
         return ((len + mod - 1) / mod) * mod;
     }
 
     static std::vector<int> asciiCodesFromString(const std::string& input) {
-
+        
+        /// Takes a string and returns a vector from the ascii codes
+        
         std::vector<int> codes;
         codes.reserve(input.size()); 
 
@@ -53,9 +57,10 @@ public:
         return codes;
     }
 
-    static char mod95ToAscii(int residue) {
-        constexpr int smallestASCII = 32;
-        constexpr int mod = 95;
+    static char mod95ToAscii(int residue, int smallestASCII = 32, int mod=95) {
+
+        /// Takes an element from Z_95 and converts to ascii code
+        /// Used for Hill decryption
 
         assert (residue >= 0 && residue < mod);
 
@@ -87,6 +92,7 @@ public:
         }
 
         std::string::const_iterator end = s.end();
+        /// We use this to iterate over a string without modifying it
         do {
             --end;
         } while (end != start && std::isspace(*end));
