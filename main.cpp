@@ -24,8 +24,9 @@ int main()
     CommandProcessor processor(pm1); // Pass the reference
     processor.run();
     
-    // _CrtDumpMemoryLeaks();  // At end of main
+    _CrtDumpMemoryLeaks();  // At end of main
 
+    std::cout<<"END\n";
     return 0;
 }
  
