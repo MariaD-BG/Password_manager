@@ -43,13 +43,15 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
 
     fileOut.close();
 
+    std::cerr<<"CHECKPOINT 0";
+
     /// We create a PasswordFile entry and add it to the PasswordManager
     PasswordFile newFile(fileNameNew, cipherType, password, cipherArgs);
 
     newFile.setCipher(Cipher::createCipherFromConfig(cipherType, cipherArgs));
 
     files.push_back(std::move(newFile));
-
+    
     std::cout << "File '" << fileNameNew << "' created successfully.\n";
 }
 

@@ -6,6 +6,7 @@
 
 struct PasswordFile{
 public:
+    
     PasswordFile(const std::string fileName, const std::string ID, const std::string password, const std::string config) : fileName(fileName), ID(ID), password(password), config(config){}
 
     std::string getName() const{
@@ -21,6 +22,8 @@ public:
             throw std::logic_error("Cipher has already been set for this file and cannot be changed.");
         }
         cipher_ptr = cipher_ptr_new;
+        cipher_initialized = true;
+
     }
 
     Cipher* getCipherPtr() const{
@@ -37,10 +40,6 @@ public:
 
     std::string getConfig() const{
         return config;
-    }
-
-    ~PasswordFile(){
-        delete cipher_ptr;
     }
 
 private:

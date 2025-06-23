@@ -11,13 +11,20 @@
 #include "passwordFile.hpp"
 #include "commandProcessor.hpp"
 
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
 int main()
 {
+
+
     PasswordManager& pm1 = PasswordManager::getInstance();
 
     std::cout<<"--------Password manager started! Please input your commands! ----------\n";
     CommandProcessor processor(pm1); // Pass the reference
     processor.run();
+    
+    // _CrtDumpMemoryLeaks();  // At end of main
 
     return 0;
 }
