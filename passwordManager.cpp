@@ -66,7 +66,7 @@ void PasswordManager::open(const std::string& fileName, const std::string& passw
             if(files[i].getPassword() == password){
                 /// We store the index of the current open file as an attribute to our PasswordManager
                 current_open_idx = i;
-                std::cout<<"File " + files[i].getName() +" opened successfully\n";
+                std::cout<<"File '" + files[i].getName() +"' opened successfully\n";
                 return;
             }else{
                 /// If password from user is incorrect we do not grant access to the file
