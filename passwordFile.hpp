@@ -39,6 +39,10 @@ public:
         return config;
     }
 
+    ~PasswordFile(){
+        delete cipher_ptr;
+    }
+
 private:
     std::string fileName;
     std::string ID;

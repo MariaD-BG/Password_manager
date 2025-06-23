@@ -75,5 +75,7 @@ bool TextCodeCipher::validateConfig(const std::string& config){
 }
 
 Cipher* TextCodeCipher::createCipherFromConfig(const std::string& config) {
+    /// Any function that uses this has the obligation to take care to delete it
+    /// This in reality is used only in the PasswordFile class
     return new TextCodeCipher(config, Source::FromFile);
 }
