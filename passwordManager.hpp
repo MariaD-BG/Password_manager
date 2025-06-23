@@ -19,6 +19,13 @@ public:
         return instance;
     }
 
+    ~PasswordManager(){
+        size_t size = files.size();
+        for(size_t i=0;i<size;i++){
+            delete files[i];
+        }
+    }
+
 private:
     PasswordManager() {}
     PasswordManager(const PasswordManager&) = delete;

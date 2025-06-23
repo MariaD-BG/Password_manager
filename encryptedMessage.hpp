@@ -60,7 +60,7 @@ public:
             for (size_t i = 0; i < len; ++i) buf[i] = static_cast<unsigned char>(data[i]);
             return EncryptedMessage(buf, len, len);
         } else {
-            // Parsing "<originalLen>|num1,num2,num3,..."
+            // Parsing <originalLen>|num1,num2,num3,...
             size_t bar = data.find('|');
             if (bar == std::string::npos)
                 throw std::runtime_error("Invalid EncryptedMessage: missing |");
