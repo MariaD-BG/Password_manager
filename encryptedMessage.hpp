@@ -43,6 +43,9 @@ public:
     std::string serialize(bool asString) const {
         if (asString) {
             return std::string(reinterpret_cast<const char*>(encrypted), len);
+            /// reinterpret_cast makes the compiler interpret the same memory differently
+            /// You have to be very careful with this!
+            /// never use reinterpet_cast within an inheritance hierarchy
         } else {
             std::string result = std::to_string(getLenOriginal()) + "|";
             for (size_t i = 0; i < getLen(); ++i) {

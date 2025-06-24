@@ -46,6 +46,7 @@ void PasswordManager::create(const std::string& fileName, const std::string& cip
     /// We create a PasswordFile* entry on the heap and add it to the PasswordManager
     PasswordFile* newFile = new PasswordFile(fileNameNew, cipherType, password, cipherArgs);
 
+    /// try-catch here
     newFile->setCipher(Cipher::createCipherFromConfig(cipherType, cipherArgs));
 
     files.push_back(newFile);
