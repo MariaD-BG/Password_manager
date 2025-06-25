@@ -3,6 +3,7 @@
 #include "caesarCipher.hpp"
 #include "textCodeCipher.hpp"
 #include "hillCipher.hpp"
+#include "petkovaCipher.hpp"
 #include "utils.hpp"
 
 #include<fstream>

@@ -100,5 +100,15 @@ public:
         return std::string(start, end + 1);
     }
 
+    static int numDig(int num){
+        if(num == 0) return 1;
+        int dig = 0;
+        while(num>0){
+            num = num/10;
+            dig++;
+        }
+        return dig;
+    }
+
     Utils() = delete; ///Static-only class: no instances
 };
